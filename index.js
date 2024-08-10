@@ -1,7 +1,7 @@
 var fs = require('fs');
 var ncp = require('ncp').ncp;
 var path = require('path');
-var rimraf = require('rimraf');
+var { rimraf } = require('rimraf');
 var mkdirp = require('mkdirp');
 
 module.exports = mv;
@@ -89,17 +89,20 @@ function moveDirAcrossDevice(source, dest, clobber, limit, cb) {
     limit: limit,
   };
   if (clobber) {
-    rimraf(dest, { disableGlob: true }, function(err) {
-      if (err) return cb(err);
-      startNcp();
-    });
+    rimraf(dest, { disableGlob: true }).then(
+      () => startNcp(),
+      err => cb(err),
+    );
   } else {
     startNcp();
   }
   function startNcp() {
     ncp(source, dest, options, function(errList) {
       if (errList) return cb(errList[0]);
-      rimraf(source, { disableGlob: true }, cb);
+      rimraf(source, { disableGlob: true }).then(
+        () => cb(),
+        err => cb(err),
+      );
     });
   }
 }

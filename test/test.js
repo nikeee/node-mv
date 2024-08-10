@@ -1,6 +1,6 @@
 var assert = require('assert');
 var fs = require('fs');
-var rimraf = require('rimraf');
+var { rimraf } = require('rimraf');
 var describe = global.describe;
 var it = global.it;
 var mv = require('../');
@@ -57,7 +57,7 @@ describe("mv", function() {
         // move it back
         mv("test/does/not/exist/a-file-dest", "test/a-file", function(err) {
           assert.ifError(err);
-          rimraf("test/does", { disableGlob: true }, done);
+          rimraf("test/does", { disableGlob: true }).then(done, done);
         });
       });
     });
